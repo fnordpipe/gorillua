@@ -44,10 +44,24 @@ func handleRequest(L *lua.LState, ctx *RouterInfo, w http.ResponseWriter, r *htt
     },
   }
 
-  module := L.SetFuncs(L.NewTable(), _w)
+  var _r = map[string]lua.LGFunction{
+    "getHeader": func(L *lua.LState) int {
+      key := L.CheckString(1)
+      header := r.Header.Get(key)
+      L.Push(lua.LString(header))
+      return 1
+    },
+  }
+
+  mw := L.SetFuncs(L.NewTable(), _w)
+  mr := L.SetFuncs(L.NewTable(), _r)
   L.Push(ctx.Callback)
-  L.Push(module)
-  L.Call(1, 0)
+  L.Push(mw)
+  L.Push(mr)
+  err := L.PCall(2, 0, nil)
+  if err != nil {
+    logger.Debug(err.Error())
+  }
 
   logger.Stdout(ctx.Context)
   return
