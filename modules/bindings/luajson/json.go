@@ -7,6 +7,7 @@ import (
 )
 
 var m = map[string]lua.LGFunction{
+  "encode": encode,
   "decode": decode,
 }
 
@@ -41,6 +42,54 @@ func Map2LValue(L *lua.LState, obj interface{}) lua.LValue {
   }
 
   return lua.LNil
+}
+
+func LValue2Map(obj lua.LValue) interface{} {
+  switch lv := obj.(type) {
+    case lua.LBool:
+      return bool(lv)
+    case lua.LNumber:
+      return float64(lv)
+    case lua.LString:
+      return string(lv)
+    case *lua.LNilType:
+      return "null"
+    case *lua.LTable:
+      m := make(map[string]interface{})
+      s := make([]interface{}, 0, lv.Len())
+
+      lv.ForEach(func(k, v lua.LValue) {
+        switch k.Type() {
+          case lua.LTNumber:
+            s = append(s, LValue2Map(v))
+          case lua.LTString:
+            m[k.String()] = LValue2Map(v)
+        }
+      })
+
+      if len(m) > 0 {
+        return m
+      }
+
+      return s
+  }
+
+  return nil
+}
+
+func encode(L *lua.LState) int {
+  jsonTable := L.CheckTable(1)
+  j := LValue2Map(jsonTable)
+
+  jsonString, err := json.Marshal(j)
+  if err != nil {
+    L.Push(lua.LNil)
+    L.Push(lua.LString(err.Error()))
+    return 2
+  }
+
+  L.Push(lua.LString(jsonString))
+  return 1
 }
 
 func decode(L *lua.LState) int {
