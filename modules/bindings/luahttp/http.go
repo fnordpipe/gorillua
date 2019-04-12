@@ -5,7 +5,7 @@ import (
 
   "github.com/gorilla/mux"
   "github.com/yuin/gopher-lua"
-  "metagit.org/fnordpipe/luado/modules/logger"
+  "metagit.org/fnordpipe/luagoesweb/modules/logger"
 )
 
 type RouterInfo struct {

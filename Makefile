@@ -1,6 +1,6 @@
-all: cmangos-api
+all: luagoesweb
 
-cmangos-api:
+luagoesweb:
 	go get github.com/gorilla/mux
 	go get gopkg.in/ini.v1
 	go get github.com/yuin/gopher-lua
@@ -8,4 +8,4 @@ cmangos-api:
 	go build
 
 clean:
-	rm -rf luado
+	rm -rf luagoesweb
