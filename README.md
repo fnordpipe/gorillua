@@ -25,9 +25,14 @@ define callback functions for http requests
       -- r is the request
       useragent = r.getHeader("User-Agent")
 
+      cookie = r.getCookie("key")
+
       -- w is the response writer
       w.addHeader("X-Header-Foo", "example")
       w.setStatus(200)
+
+      w.setCookie("key", "value", "/", 86400, true)
+
       w.write("this is the response body")
     end
 

@@ -32,6 +32,24 @@ func handleRequest(L *lua.LState, ctx RouterInfo, w http.ResponseWriter, r *http
       w.Header().Add(key, value)
       return 0
     },
+    "setCookie": func(L *lua.LState) int {
+      name := L.CheckString(1)
+      value := L.CheckString(2)
+      path := L.CheckString(3)
+      maxage := L.CheckNumber(4)
+      httponly := L.CheckBool(5)
+
+      cookie := http.Cookie{
+        Name: name,
+        Value: value,
+        Path: path,
+        MaxAge: int(lua.LVAsNumber(maxage)),
+        HttpOnly: httponly,
+      }
+
+      http.SetCookie(w, &cookie)
+      return 0
+    },
     "setStatus": func(L *lua.LState) int {
       status := L.CheckNumber(1)
       w.WriteHeader(int(status))
@@ -45,6 +63,18 @@ func handleRequest(L *lua.LState, ctx RouterInfo, w http.ResponseWriter, r *http
   }
 
   var _r = map[string]lua.LGFunction{
+    "getCookie": func(L *lua.LState) int {
+      name := L.CheckString(1)
+      cookie, err := r.Cookie(name)
+      if err != nil {
+        L.Push(lua.LNil)
+        L.Push(lua.LString(err.Error()))
+        return 2
+      }
+
+      L.Push(lua.LString(cookie.Value))
+      return 1
+    },
     "getHeader": func(L *lua.LState) int {
       key := L.CheckString(1)
       header := r.Header.Get(key)
