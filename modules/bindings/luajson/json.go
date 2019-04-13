@@ -94,16 +94,25 @@ func encode(L *lua.LState) int {
 
 func decode(L *lua.LState) int {
   jsonString := L.CheckString(1)
-  var j map[string]interface{}
+  var m map[string]interface{}
+  var s []interface{}
 
-  err := json.Unmarshal([]byte(jsonString), &j)
+  err := json.Unmarshal([]byte(jsonString), &m)
+  if err != nil {
+    err = json.Unmarshal([]byte(jsonString), &s)
+  }
   if err != nil {
     L.Push(lua.LNil)
     L.Push(lua.LString(err.Error()))
     return 2
   }
 
-  lv := Map2LValue(L, j)
+  var lv lua.LValue
+  if len(m) > 0 {
+    lv = Map2LValue(L, m)
+  } else {
+    lv = Map2LValue(L, s)
+  }
   L.Push(lv)
 
   return 1
