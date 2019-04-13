@@ -70,6 +70,7 @@ func handleRequest(L *lua.LState, ctx *RouterInfo, w http.ResponseWriter, r *htt
 func serve(L *lua.LState) int {
   address := L.CheckString(1)
   lrouter := L.CheckTable(2)
+  lstatic := L.CheckAny(3)
   router := mux.NewRouter()
   var r []RouterInfo
 
@@ -90,6 +91,12 @@ func serve(L *lua.LState) int {
     router.HandleFunc(v.Context, func(w http.ResponseWriter, r *http.Request) {
       handleRequest(L, &v, w, r)
     }).Methods(v.Method)
+  }
+
+  switch lv := lstatic.(type) {
+    case lua.LString:
+      router.PathPrefix("/").Handler(
+        http.StripPrefix("/static/", http.FileServer(http.Dir(lv.String()))))
   }
 
   http.ListenAndServe(address, router)
