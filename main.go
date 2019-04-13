@@ -4,6 +4,7 @@ import (
   "fmt"
   "os"
 
+  "metagit.org/fnordpipe/gorillua/modules/bindings/luabase64"
   "metagit.org/fnordpipe/gorillua/modules/bindings/luahttp"
   "metagit.org/fnordpipe/gorillua/modules/bindings/luajson"
   "metagit.org/fnordpipe/gorillua/modules/bindings/luarequest"
@@ -32,6 +33,7 @@ func main() {
   }
   L.SetGlobal("arg", t)
 
+  L.PreloadModule("base64", luabase64.Loader)
   L.PreloadModule("http", luahttp.Loader)
   L.PreloadModule("json", luajson.Loader)
   L.PreloadModule("request", luarequest.Loader)

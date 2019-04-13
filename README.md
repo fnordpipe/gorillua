@@ -7,6 +7,13 @@
 
 ## bindings
 
+### base64
+
+    local base64 = require("base64")
+
+    b = base64.encode("hello world")
+    s = base64.decode(b)
+
 ### http
 
 start serving requests
