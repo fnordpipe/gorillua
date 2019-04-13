@@ -12,17 +12,28 @@ import (
 
 var L *lua.LState
 
+var _LUA_PATH string
+
 func main() {
-  if len(os.Args) != 2 {
-    logger.Stdout(fmt.Sprintf("USAGE: %s <lua>", os.Args[0]))
+  if len(os.Args) < 2 {
+    logger.Stdout(fmt.Sprintf("USAGE: %s <lua> [...]", os.Args[0]))
     os.Exit(1)
   }
+
+  lua.LuaPathDefault = _LUA_PATH
 
   L := lua.NewState()
   defer L.Close()
 
+  t := L.CreateTable(0, len(os.Args))
+  for _, v := range os.Args {
+    t.Append(lua.LString(v))
+  }
+  L.SetGlobal("arg", t)
+
   L.PreloadModule("http", luahttp.Loader)
   L.PreloadModule("json", luajson.Loader)
+
   if err := L.DoFile(os.Args[1]); err != nil {
     logger.Error("Cannot parse lua script")
     logger.Debug(err.Error())
