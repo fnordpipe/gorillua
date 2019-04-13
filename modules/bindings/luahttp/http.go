@@ -2,6 +2,7 @@ package luahttp
 
 import (
   "net/http"
+  "strings"
 
   "github.com/gorilla/mux"
   "github.com/yuin/gopher-lua"
@@ -79,6 +80,21 @@ func handleRequest(L *lua.LState, ctx RouterInfo, w http.ResponseWriter, r *http
       key := L.CheckString(1)
       header := r.Header.Get(key)
       L.Push(lua.LString(header))
+      return 1
+    },
+    "parseForm": func(L *lua.LState) int {
+      r.ParseForm()
+      if len(r.Form) <= 0 {
+        L.Push(lua.LNil)
+        L.Push(lua.LString("no form data to parse"))
+        return 2
+      }
+
+      t := L.CreateTable(0, len(r.Form))
+      for k, v := range r.Form {
+        t.RawSetH(lua.LString(k), lua.LString(strings.Join(v, "")))
+      }
+      L.Push(t)
       return 1
     },
   }

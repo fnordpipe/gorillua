@@ -27,6 +27,9 @@ define callback functions for http requests
 
       cookie = r.getCookie("key")
 
+      params = r.parseForm()
+      print(params.username)
+
       -- w is the response writer
       w.addHeader("X-Header-Foo", "example")
       w.setStatus(200)
