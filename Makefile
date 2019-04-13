@@ -1,8 +1,8 @@
 LUA_PATH?=./?.lua;/usr/share/luagoesweb/?.lua
 
-all: luagoesweb
+all: gorillua
 
-luagoesweb:
+gorillua:
 	go get github.com/gorilla/mux
 	go get gopkg.in/ini.v1
 	go get github.com/yuin/gopher-lua
@@ -10,4 +10,4 @@ luagoesweb:
 	go build -ldflags "-X main._LUA_PATH=${LUA_PATH}"
 
 clean:
-	rm -rf luagoesweb
+	rm -rf gorillua

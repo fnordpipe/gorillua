@@ -4,10 +4,10 @@ import (
   "fmt"
   "os"
 
-  "metagit.org/fnordpipe/luagoesweb/modules/bindings/luahttp"
-  "metagit.org/fnordpipe/luagoesweb/modules/bindings/luajson"
-  "metagit.org/fnordpipe/luagoesweb/modules/bindings/luarequest"
-  "metagit.org/fnordpipe/luagoesweb/modules/logger"
+  "metagit.org/fnordpipe/gorillua/modules/bindings/luahttp"
+  "metagit.org/fnordpipe/gorillua/modules/bindings/luajson"
+  "metagit.org/fnordpipe/gorillua/modules/bindings/luarequest"
+  "metagit.org/fnordpipe/gorillua/modules/logger"
   "github.com/yuin/gopher-lua"
 )
 

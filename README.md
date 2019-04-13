@@ -1,9 +1,9 @@
-> lua **go**es web
+> **go**ril**lua**
 
 # doc
 
-    make LUA_PATH="./?.lua;/usr/share/luagoesweb/?.lua"
-    ./luagoesweb ./example.lua [...]
+    make LUA_PATH="./?.lua;/usr/share/gorillua/?.lua"
+    ./gorillua ./example.lua [...]
 
 ## bindings
 
