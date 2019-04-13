@@ -6,6 +6,7 @@ import (
 
   "metagit.org/fnordpipe/luagoesweb/modules/bindings/luahttp"
   "metagit.org/fnordpipe/luagoesweb/modules/bindings/luajson"
+  "metagit.org/fnordpipe/luagoesweb/modules/bindings/luarequest"
   "metagit.org/fnordpipe/luagoesweb/modules/logger"
   "github.com/yuin/gopher-lua"
 )
@@ -33,6 +34,7 @@ func main() {
 
   L.PreloadModule("http", luahttp.Loader)
   L.PreloadModule("json", luajson.Loader)
+  L.PreloadModule("request", luarequest.Loader)
 
   if err := L.DoFile(os.Args[1]); err != nil {
     logger.Error("Cannot parse lua script")

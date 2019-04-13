@@ -39,3 +39,12 @@ define callback functions for http requests
     print(foo.hello)
     foo.bla = 3
     json.encode(foo)
+
+### request
+
+    local request = require("request")
+
+    -- 3rd argument contains the request body
+    -- 4th argument is a table of request headers
+    code, body, header, err = request.send(
+      "GET", "http://example.org", nil, nil)
