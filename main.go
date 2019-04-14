@@ -7,6 +7,7 @@ import (
   "metagit.org/fnordpipe/gorillua/modules/bindings/luabase64"
   "metagit.org/fnordpipe/gorillua/modules/bindings/luahttp"
   "metagit.org/fnordpipe/gorillua/modules/bindings/luajson"
+  "metagit.org/fnordpipe/gorillua/modules/bindings/luamariadb"
   "metagit.org/fnordpipe/gorillua/modules/bindings/luarequest"
   "metagit.org/fnordpipe/gorillua/modules/logger"
   "github.com/yuin/gopher-lua"
@@ -36,6 +37,7 @@ func main() {
   L.PreloadModule("base64", luabase64.Loader)
   L.PreloadModule("http", luahttp.Loader)
   L.PreloadModule("json", luajson.Loader)
+  L.PreloadModule("mariadb", luamariadb.Loader)
   L.PreloadModule("request", luarequest.Loader)
 
   if err := L.DoFile(os.Args[1]); err != nil {
