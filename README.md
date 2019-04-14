@@ -59,7 +59,7 @@ define callback functions for http requests
 
     local mariadb = require("mariadb")
 
-    db = mariadb.open("user", "password", "127.0.0.1", "3306", "database")
+    db = mariadb.open("user", "password", "127.0.0.1:3306", "database")
     result = db.query("SELECT * FROM table WHERE id = ?", 1)
     for k, v in pairs(result) do print(v.id) end
     db.close()

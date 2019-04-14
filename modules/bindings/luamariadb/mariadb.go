@@ -22,14 +22,12 @@ func open(L *lua.LState) int {
   username := L.CheckString(1)
   password := L.CheckString(2)
   address := L.CheckString(3)
-  port := L.CheckString(4)
-  database := L.CheckString(5)
+  database := L.CheckString(4)
 
   db, err := sql.Open("mysql", fmt.Sprintf(
-    "%s:%s@tcp(%s:%d)/%s",
+    "%s:%s@tcp(%s)/%s",
     username, password,
-    address, port,
-    database))
+    address, database))
   if err != nil {
     L.Push(lua.LNil)
     L.Push(lua.LString(err.Error()))
@@ -43,15 +41,14 @@ func open(L *lua.LState) int {
     },
     "query": func(L *lua.LState) int {
       var args []interface{}
-      var nargs int
+      nargs := L.GetTop()
       query := L.CheckString(1)
 
-      for i := 2;; i++ {
+      for i := 2; i <= nargs; i++ {
         a := L.CheckAny(i)
         switch lv := a.(type) {
           case *lua.LNilType:
-            nargs = i - 1
-            break;
+            args = append(args, lua.LNil)
           case lua.LString:
             args = append(args, lv.String())
           case lua.LNumber:
@@ -68,9 +65,9 @@ func open(L *lua.LState) int {
       defer stmt.Close()
 
       var rows *sql.Rows
-      if nargs > 0 {
-        p := make([]interface{}, nargs)
-	for i := 0; i < nargs; i++ {
+      if nargs > 1 {
+        p := make([]interface{}, nargs - 1)
+	for i := 0; i < nargs - 1; i++ {
           p[i] = &args[i]
         }
 
@@ -79,19 +76,27 @@ func open(L *lua.LState) int {
         rows, err = stmt.Query()
       }
 
-      if err != nil {
+      if nargs > 1 && err != nil {
         L.Push(lua.LNil)
         L.Push(lua.LString(err.Error()))
         return 2
       }
 
-      cols, _ := rows.Columns()
+      cols, _ := rows.ColumnTypes()
       var result []lua.LTable
       for rows.Next() {
-        columns := make([]interface{}, len(cols))
         cp := make([]interface{}, len(cols))
-	for i, _ := range columns {
-          cp[i] = &columns[i]
+	for k, v := range cols {
+          ct := v.DatabaseTypeName()
+          if ct == "VARCHAR" || ct == "TEXT" || ct == "NVARCHAR" {
+            cp[k] = new(string)
+          }
+          if ct == "DECIMAL" || ct == "INT" || ct == "BIGINT" {
+            cp[k] = new(float64)
+          }
+          if ct == "BOOL" {
+            cp[k] = new(bool)
+          }
         }
 
 	err := rows.Scan(cp...)
@@ -102,27 +107,22 @@ func open(L *lua.LState) int {
         }
 
         t := L.CreateTable(0, len(cols))
-        for k, _ := range cols {
-          switch lv := cp[k].(type) {
-            case bool:
-              t.RawSetH(lua.LString(k), lua.LBool(lv))
-            case float64:
-              t.RawSetH(lua.LString(k), lua.LNumber(lv))
-            case int:
-              t.RawSetH(lua.LString(k), lua.LNumber(float64(lv)))
-            case string:
-              t.RawSetH(lua.LString(k), lua.LString(lv))
-            case nil:
-              t.RawSetH(lua.LString(k), lua.LNil)
+	for k, v := range cols {
+          switch i := (*(&cp[k])).(type) {
+            case *string:
+              t.RawSetH(lua.LString(v.Name()), lua.LString(*i))
+            case *float64:
+              t.RawSetH(lua.LString(v.Name()), lua.LNumber(*i))
+            case *bool:
+              t.RawSetH(lua.LString(v.Name()), lua.LBool(*i))
           }
         }
-
         result = append(result, *t)
       }
 
       tables := L.CreateTable(len(result), 0)
-      for _, v := range result {
-        tables.Append(&v)
+      for k, _ := range result {
+        tables.Append(&result[k])
       }
 
       L.Push(tables)
