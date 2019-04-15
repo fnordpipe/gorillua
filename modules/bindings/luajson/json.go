@@ -49,7 +49,11 @@ func LValue2Map(obj lua.LValue) interface{} {
     case lua.LBool:
       return bool(lv)
     case lua.LNumber:
-      return float64(lv)
+      if float64(lv) == float64(int64(lv)) {
+        return int64(lv)
+      } else {
+        return float64(lv)
+      }
     case lua.LString:
       return string(lv)
     case *lua.LNilType:

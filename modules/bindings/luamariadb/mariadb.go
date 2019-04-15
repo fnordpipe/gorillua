@@ -91,7 +91,11 @@ func open(L *lua.LState) int {
           if ct == "VARCHAR" || ct == "TEXT" || ct == "NVARCHAR" {
             cp[k] = new(string)
           }
-          if ct == "DECIMAL" || ct == "INT" || ct == "BIGINT" {
+          if ct == "DECIMAL" || ct == "INT" || ct == "BIGINT" ||
+             ct == "TINYINT" {
+            cp[k] = new(int64)
+          }
+          if ct == "FLOAT" {
             cp[k] = new(float64)
           }
           if ct == "BOOL" {
@@ -111,6 +115,8 @@ func open(L *lua.LState) int {
           switch i := (*(&cp[k])).(type) {
             case *string:
               t.RawSetH(lua.LString(v.Name()), lua.LString(*i))
+            case *int64:
+              t.RawSetH(lua.LString(v.Name()), lua.LNumber(*i))
             case *float64:
               t.RawSetH(lua.LString(v.Name()), lua.LNumber(*i))
             case *bool:
