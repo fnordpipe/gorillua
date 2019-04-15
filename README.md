@@ -72,3 +72,11 @@ define callback functions for http requests
     -- 4th argument is a table of request headers
     code, body, header, err = request.send(
       "GET", "http://example.org", nil, nil)
+
+### socket
+
+    local socket = require("socket")
+
+    -- 3rd argument is optional and defines a timeout in seconds
+    c = socket.open("tcp", "127.0.0.1:8080", nil)
+    c.close()
