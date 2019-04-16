@@ -14,6 +14,15 @@
     b = base64.encode("hello world")
     s = base64.decode(b)
 
+### cron
+
+    local cron = require("cron")
+
+    -- 1st argument is the interval in seconds while
+    -- 2nd is a function that will be called
+    c = cron.run(10, function() print("hello world") end)
+    c.stop()
+
 ### http
 
 start serving requests
