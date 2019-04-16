@@ -136,7 +136,8 @@ func serve(L *lua.LState) int {
   for k, _ := range routes {
     j := k
     router.HandleFunc(routes[j].Context, func(w http.ResponseWriter, r *http.Request) {
-      handleRequest(L, routes[j], w, r)
+      nL, _ := L.NewThread()
+      handleRequest(nL, routes[j], w, r)
     }).Methods(routes[j].Method)
   }
 
