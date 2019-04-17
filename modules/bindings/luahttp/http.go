@@ -27,13 +27,13 @@ func Loader(L *lua.LState) int {
 
 func handleRequest(L *lua.LState, ctx RouterInfo, w http.ResponseWriter, r *http.Request) {
   var _w = map[string]lua.LGFunction{
-    "addHeader": func(L *lua.LState) int {
+    "add_header": func(L *lua.LState) int {
       key := L.CheckString(1)
       value := L.CheckString(2)
       w.Header().Add(key, value)
       return 0
     },
-    "setCookie": func(L *lua.LState) int {
+    "set_cookie": func(L *lua.LState) int {
       name := L.CheckString(1)
       value := L.CheckString(2)
       path := L.CheckString(3)
@@ -51,7 +51,7 @@ func handleRequest(L *lua.LState, ctx RouterInfo, w http.ResponseWriter, r *http
       http.SetCookie(w, &cookie)
       return 0
     },
-    "setStatus": func(L *lua.LState) int {
+    "set_status": func(L *lua.LState) int {
       status := L.CheckNumber(1)
       w.WriteHeader(int(status))
       return 0
@@ -64,7 +64,7 @@ func handleRequest(L *lua.LState, ctx RouterInfo, w http.ResponseWriter, r *http
   }
 
   var _r = map[string]lua.LGFunction{
-    "getCookie": func(L *lua.LState) int {
+    "get_cookie": func(L *lua.LState) int {
       name := L.CheckString(1)
       cookie, err := r.Cookie(name)
       if err != nil {
@@ -76,13 +76,13 @@ func handleRequest(L *lua.LState, ctx RouterInfo, w http.ResponseWriter, r *http
       L.Push(lua.LString(cookie.Value))
       return 1
     },
-    "getHeader": func(L *lua.LState) int {
+    "get_header": func(L *lua.LState) int {
       key := L.CheckString(1)
       header := r.Header.Get(key)
       L.Push(lua.LString(header))
       return 1
     },
-    "parseForm": func(L *lua.LState) int {
+    "parse_form": func(L *lua.LState) int {
       r.ParseForm()
       if len(r.Form) <= 0 {
         L.Push(lua.LNil)

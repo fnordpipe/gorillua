@@ -39,18 +39,18 @@ define callback functions for http requests
 
     function example(w, r)
       -- r is the request
-      useragent = r.getHeader("User-Agent")
+      useragent = r.get_header("User-Agent")
 
-      cookie = r.getCookie("key")
+      cookie = r.get_cookie("key")
 
-      params = r.parseForm()
+      params = r.parse_form()
       print(params.username)
 
       -- w is the response writer
-      w.addHeader("X-Header-Foo", "example")
-      w.setStatus(200)
+      w.add_header("X-Header-Foo", "example")
+      w.set_status(200)
 
-      w.setCookie("key", "value", "/", 86400, true)
+      w.set_cookie("key", "value", "/", 86400, true)
 
       w.write("this is the response body")
     end
