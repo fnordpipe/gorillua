@@ -32,6 +32,12 @@ func run(L *lua.LState) int {
   L.Push(module)
 
   f := func() {
+    nL.Push(function)
+    err := nL.PCall(0, 0, nil)
+    if err != nil {
+      logger.Error(err.Error())
+      return
+    }
     t := time.Duration(interval) * time.Second
     for range time.Tick(t) {
       nL.Push(function)
