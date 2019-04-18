@@ -1,8 +1,12 @@
 package luahttp
 
 import (
+  "context"
   "net/http"
   "strings"
+  "os"
+  "os/signal"
+  "time"
 
   "github.com/gorilla/mux"
   "github.com/yuin/gopher-lua"
@@ -147,7 +151,25 @@ func serve(L *lua.LState) int {
         http.StripPrefix("/static/", http.FileServer(http.Dir(lv.String()))))
   }
 
-  http.ListenAndServe(address, router)
+  server := &http.Server{Addr: address, Handler: router}
+  go func() {
+    err := server.ListenAndServe();
+    if err != nil {
+      logger.Error(err.Error())
+      return
+    }
+  }()
+
+  stop := make(chan os.Signal, 1)
+  signal.Notify(stop, os.Interrupt)
+
+  <-stop
+
+  ctx, _ := context.WithTimeout(context.Background(), 5 * time.Second)
+  err := server.Shutdown(ctx)
+  if err != nil {
+    logger.Error(err.Error())
+  }
 
   return 0
 }
