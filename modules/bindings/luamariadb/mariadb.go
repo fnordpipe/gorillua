@@ -88,7 +88,8 @@ func open(L *lua.LState) int {
         cp := make([]interface{}, len(cols))
 	for k, v := range cols {
           ct := v.DatabaseTypeName()
-          if ct == "VARCHAR" || ct == "TEXT" || ct == "NVARCHAR" {
+          if ct == "VARCHAR" || ct == "TEXT" || ct == "NVARCHAR" ||
+             ct == "TIMESTAMP" {
             cp[k] = new(string)
           }
           if ct == "DECIMAL" || ct == "INT" || ct == "BIGINT" ||
