@@ -89,3 +89,9 @@ define callback functions for http requests
     -- 3rd argument is optional and defines a timeout in seconds
     c = socket.open("tcp", "127.0.0.1:8080", nil)
     c.close()
+
+### uuid
+
+    local uuid = require("uuid")
+
+    u = uuid.create()
