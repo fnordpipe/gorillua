@@ -113,7 +113,7 @@ func handleRequest(L *lua.LState, ctx RouterInfo, w http.ResponseWriter, r *http
     logger.Debug(err.Error())
   }
 
-  logger.Stdout(ctx.Context)
+  logger.Info(ctx.Context)
   return
 }
 

@@ -8,6 +8,7 @@ import (
   "metagit.org/fnordpipe/gorillua/modules/bindings/luacron"
   "metagit.org/fnordpipe/gorillua/modules/bindings/luahttp"
   "metagit.org/fnordpipe/gorillua/modules/bindings/luajson"
+  "metagit.org/fnordpipe/gorillua/modules/bindings/lualogger"
   "metagit.org/fnordpipe/gorillua/modules/bindings/luamariadb"
   "metagit.org/fnordpipe/gorillua/modules/bindings/luarequest"
   "metagit.org/fnordpipe/gorillua/modules/bindings/luasocket"
@@ -22,7 +23,7 @@ var _LUA_PATH string
 
 func main() {
   if len(os.Args) < 2 {
-    logger.Stdout(fmt.Sprintf("USAGE: %s <lua> [...]", os.Args[0]))
+    logger.Info(fmt.Sprintf("USAGE: %s <lua> [...]", os.Args[0]))
     os.Exit(1)
   }
 
@@ -41,6 +42,7 @@ func main() {
   L.PreloadModule("cron", luacron.Loader)
   L.PreloadModule("http", luahttp.Loader)
   L.PreloadModule("json", luajson.Loader)
+  L.PreloadModule("logger", lualogger.Loader)
   L.PreloadModule("mariadb", luamariadb.Loader)
   L.PreloadModule("request", luarequest.Loader)
   L.PreloadModule("socket", luasocket.Loader)
