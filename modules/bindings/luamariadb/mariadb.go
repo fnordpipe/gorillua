@@ -90,17 +90,17 @@ func open(L *lua.LState) int {
           ct := v.DatabaseTypeName()
           if ct == "VARCHAR" || ct == "TEXT" || ct == "NVARCHAR" ||
              ct == "TIMESTAMP" {
-            cp[k] = new(string)
+            cp[k] = new(sql.NullString)
           }
           if ct == "DECIMAL" || ct == "INT" || ct == "BIGINT" ||
              ct == "TINYINT" {
-            cp[k] = new(int64)
+            cp[k] = new(sql.NullInt64)
           }
           if ct == "FLOAT" {
-            cp[k] = new(float64)
+            cp[k] = new(sql.NullFloat64)
           }
           if ct == "BOOL" {
-            cp[k] = new(bool)
+            cp[k] = new(sql.NullBool)
           }
         }
 
@@ -114,14 +114,30 @@ func open(L *lua.LState) int {
         t := L.CreateTable(0, len(cols))
 	for k, v := range cols {
           switch i := (*(&cp[k])).(type) {
-            case *string:
-              t.RawSetH(lua.LString(v.Name()), lua.LString(*i))
-            case *int64:
-              t.RawSetH(lua.LString(v.Name()), lua.LNumber(*i))
-            case *float64:
-              t.RawSetH(lua.LString(v.Name()), lua.LNumber(*i))
-            case *bool:
-              t.RawSetH(lua.LString(v.Name()), lua.LBool(*i))
+            case *sql.NullString:
+              if (*i).Valid {
+                t.RawSetH(lua.LString(v.Name()), lua.LString((*i).String))
+              } else {
+                t.RawSetH(lua.LString(v.Name()), lua.LNil)
+              }
+            case *sql.NullInt64:
+              if (*i).Valid {
+                t.RawSetH(lua.LString(v.Name()), lua.LNumber((*i).Int64))
+              } else {
+                t.RawSetH(lua.LString(v.Name()), lua.LNil)
+              }
+            case *sql.NullFloat64:
+              if (*i).Valid {
+                t.RawSetH(lua.LString(v.Name()), lua.LNumber((*i).Float64))
+              } else {
+                t.RawSetH(lua.LString(v.Name()), lua.LNil)
+              }
+            case *sql.NullBool:
+              if (*i).Valid {
+                t.RawSetH(lua.LString(v.Name()), lua.LBool((*i).Bool))
+              } else {
+                t.RawSetH(lua.LString(v.Name()), lua.LNil)
+              }
           }
         }
         result = append(result, *t)
