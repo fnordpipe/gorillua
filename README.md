@@ -45,6 +45,10 @@ define callback functions for http requests
 
       cookie = r.get_cookie("key")
 
+      -- /foo/bla/{id}
+      vars = r.parse_vars()
+      print(vars.id)
+
       params = r.parse_form()
       print(params.username)
 

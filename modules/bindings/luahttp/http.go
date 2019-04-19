@@ -105,6 +105,15 @@ func handleRequest(L *lua.LState, ctx RouterInfo, w http.ResponseWriter, r *http
       L.Push(lua.LString(header))
       return 1
     },
+    "parse_vars": func(L *lua.LState) int {
+      vars := mux.Vars(r)
+      t := L.CreateTable(0, len(vars))
+      for k, v := range vars {
+        t.RawSetH(lua.LString(k), lua.LString(v))
+      }
+      L.Push(t)
+      return 1
+    },
     "parse_form": func(L *lua.LState) int {
       r.ParseForm()
       if len(r.Form) <= 0 {
