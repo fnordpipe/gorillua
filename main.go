@@ -50,7 +50,7 @@ func main() {
 
   if err := L.DoFile(os.Args[1]); err != nil {
     logger.Error("Cannot parse lua script")
-    logger.Debug(err.Error())
+    logger.Error(err.Error())
     os.Exit(2)
   }
 }

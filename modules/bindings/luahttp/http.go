@@ -2,6 +2,7 @@ package luahttp
 
 import (
   "context"
+  "io/ioutil"
   "net/http"
   "strings"
   "os"
@@ -68,6 +69,24 @@ func handleRequest(L *lua.LState, ctx RouterInfo, w http.ResponseWriter, r *http
   }
 
   var _r = map[string]lua.LGFunction{
+    "get_body": func(L *lua.LState) int {
+      defer r.Body.Close()
+      body, err := ioutil.ReadAll(r.Body)
+      if err != nil {
+        L.Push(lua.LNil)
+        L.Push(lua.LString(err.Error()))
+        return 2
+      }
+
+      if string(body[:]) == "" {
+        L.Push(lua.LNil)
+        L.Push(lua.LString("empty/truncated body"))
+        return 2
+      }
+
+      L.Push(lua.LString(body))
+      return 1
+    },
     "get_cookie": func(L *lua.LState) int {
       name := L.CheckString(1)
       cookie, err := r.Cookie(name)
@@ -113,7 +132,7 @@ func handleRequest(L *lua.LState, ctx RouterInfo, w http.ResponseWriter, r *http
     logger.Debug(err.Error())
   }
 
-  logger.Info(ctx.Context)
+  logger.Info("%s %s", ctx.Method, ctx.Context)
   return
 }
 

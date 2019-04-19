@@ -14,19 +14,19 @@ const (
 
 var Verbosity = _VERBOSITY_ERROR
 
-func Debug(msg string) {
-  log(msg, _VERBOSITY_DEBUG)
+func Debug(msg string, argv... interface{}) {
+  log(msg, _VERBOSITY_DEBUG, argv...)
 }
 
-func Error(msg string) {
-  log(msg, _VERBOSITY_ERROR)
+func Error(msg string, argv... interface{}) {
+  log(msg, _VERBOSITY_ERROR, argv...)
 }
 
-func Info(msg string) {
-  log(msg, _VERBOSITY_INFO)
+func Info(msg string, argv... interface{}) {
+  log(msg, _VERBOSITY_INFO, argv...)
 }
 
-func log(msg string, lvl int) {
+func log(msg string, lvl int, argv... interface{}) {
   var l string
   var o *os.File
 
@@ -41,7 +41,8 @@ func log(msg string, lvl int) {
     o = os.Stdout
   }
   t := time.Now().UTC().Format("2006-01-02T15:04:05-0700")
-  m := fmt.Sprintf("[%s] %s - %s", t, l, msg)
+  m := fmt.Sprintf(msg, argv...)
+  m = fmt.Sprintf("[%s] %s - %s", t, l, m)
 
   if lvl >= Verbosity {
     fmt.Fprintf(o, fmt.Sprintf("%s\n", m))

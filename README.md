@@ -41,6 +41,8 @@ define callback functions for http requests
       -- r is the request
       useragent = r.get_header("User-Agent")
 
+      body = r.get_body()
+
       cookie = r.get_cookie("key")
 
       params = r.parse_form()
@@ -63,6 +65,16 @@ define callback functions for http requests
     print(foo.hello)
     foo.bla = 3
     json.encode(foo)
+
+### logger
+
+    local logger = require("logger")
+
+    -- 0: debug, 1: error, 2: info
+    logger.set_level(0)
+    logger.debug("this is a debug message")
+    logger.error("this is a error message")
+    logger.info("this is a info message")
 
 ### mariadb
 
