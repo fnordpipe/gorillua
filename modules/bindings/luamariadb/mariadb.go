@@ -93,7 +93,7 @@ func open(L *lua.LState) int {
             cp[k] = new(sql.NullString)
           }
           if ct == "DECIMAL" || ct == "INT" || ct == "BIGINT" ||
-             ct == "TINYINT" {
+             ct == "TINYINT" || ct == "SMALLINT" {
             cp[k] = new(sql.NullInt64)
           }
           if ct == "FLOAT" {
