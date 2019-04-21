@@ -102,6 +102,10 @@ func handleRequest(L *lua.LState, ctx RouterInfo, w http.ResponseWriter, r *http
     "get_header": func(L *lua.LState) int {
       key := L.CheckString(1)
       header := r.Header.Get(key)
+      if header == "" {
+       L.Push(lua.LNil)
+       return 1
+      }
       L.Push(lua.LString(header))
       return 1
     },
