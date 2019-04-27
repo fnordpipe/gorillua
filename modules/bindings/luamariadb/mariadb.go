@@ -4,6 +4,7 @@ import (
   "database/sql"
   _ "github.com/go-sql-driver/mysql"
   "fmt"
+  "strings"
 
   "github.com/yuin/gopher-lua"
 )
@@ -64,22 +65,45 @@ func open(L *lua.LState) int {
       }
       defer stmt.Close()
 
+      var selectquery = strings.HasPrefix(
+        strings.ToLower(query),
+        "select")
+
       var rows *sql.Rows
+      var res sql.Result
       if nargs > 1 {
         p := make([]interface{}, nargs - 1)
 	for i := 0; i < nargs - 1; i++ {
           p[i] = &args[i]
         }
 
-        rows, err = stmt.Query(p...)
+        if selectquery {
+          rows, err = stmt.Query(p...)
+        } else {
+          res, err = stmt.Exec(p...)
+        }
       } else {
-        rows, err = stmt.Query()
+        if selectquery {
+          rows, err = stmt.Query()
+        } else {
+          res, err = stmt.Exec()
+        }
       }
 
       if nargs > 1 && err != nil {
         L.Push(lua.LNil)
         L.Push(lua.LString(err.Error()))
         return 2
+      }
+
+      if !selectquery {
+        t := L.CreateTable(0, 2)
+        ra, _ := res.RowsAffected()
+        li, _ := res.LastInsertId()
+        t.RawSetH(lua.LString("affected_rows"), lua.LNumber(ra))
+        t.RawSetH(lua.LString("last_id"), lua.LNumber(li))
+        L.Push(t)
+        return 1
       }
 
       cols, _ := rows.ColumnTypes()
