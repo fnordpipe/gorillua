@@ -12,6 +12,7 @@ import (
   "metagit.org/fnordpipe/gorillua/modules/bindings/luamariadb"
   "metagit.org/fnordpipe/gorillua/modules/bindings/luarequest"
   "metagit.org/fnordpipe/gorillua/modules/bindings/luasocket"
+  "metagit.org/fnordpipe/gorillua/modules/bindings/luasrp"
   "metagit.org/fnordpipe/gorillua/modules/bindings/luauuid"
   "metagit.org/fnordpipe/gorillua/modules/logger"
   "github.com/yuin/gopher-lua"
@@ -46,6 +47,7 @@ func main() {
   L.PreloadModule("mariadb", luamariadb.Loader)
   L.PreloadModule("request", luarequest.Loader)
   L.PreloadModule("socket", luasocket.Loader)
+  L.PreloadModule("srp", luasrp.Loader)
   L.PreloadModule("uuid", luauuid.Loader)
 
   if err := L.DoFile(os.Args[1]); err != nil {
