@@ -6,7 +6,8 @@ import (
 )
 
 var m = map[string]lua.LGFunction{
-  "new": new,
+  "hash": _hash,
+  "new": _new,
 }
 
 func Loader(L *lua.LState) int {
@@ -15,7 +16,15 @@ func Loader(L *lua.LState) int {
   return 1
 }
 
-func new(L *lua.LState) int {
+func _hash(L *lua.LState) int {
+  username := L.CheckString(1)
+  password := L.CheckString(2)
+  hash := srp.Hash(username, password)
+  L.Push(lua.LString(hash))
+  return 1
+}
+
+func _new(L *lua.LState) int {
   _srp := srp.New()
 
   var _m = map[string]lua.LGFunction{
@@ -34,11 +43,6 @@ func new(L *lua.LState) int {
     },
     "get_verifier": func(L *lua.LState) int {
       L.Push(lua.LString(_srp.GetVerifier()))
-      return 1
-    },
-    "hash": func(L *lua.LState) int {
-      p := L.CheckString(1)
-      L.Push(lua.LString(_srp.Hash(p)))
       return 1
     },
     "proof_verifier": func(L *lua.LState) int {
