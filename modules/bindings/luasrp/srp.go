@@ -2,7 +2,7 @@ package luasrp
 
 import (
   "github.com/yuin/gopher-lua"
-  "metagit.org/blizzlike/wowpasswd/srp"
+  "github.com/blizzlike-org/wowpasswd/srp"
 )
 
 var m = map[string]lua.LGFunction{

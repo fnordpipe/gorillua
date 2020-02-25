@@ -7,7 +7,7 @@ gorillua:
 	go get github.com/google/uuid
 	go get github.com/yuin/gopher-lua
 	go get github.com/go-sql-driver/mysql
-	go get metagit.org/blizzlike/wowpasswd
+	go get github.com/blizzlike-org/wowpasswd
 	go build -ldflags "-X main._LUA_PATH=${LUA_PATH}"
 
 clean:

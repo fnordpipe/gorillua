@@ -11,7 +11,7 @@ import (
 
   "github.com/gorilla/mux"
   "github.com/yuin/gopher-lua"
-  "metagit.org/fnordpipe/gorillua/modules/logger"
+  "github.com/fnordpipe/gorillua/modules/logger"
 )
 
 type RouterInfo struct {
