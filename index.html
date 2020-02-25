@@ -1,0 +1,152 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8"/>
+    <meta name="description" content="lua application server"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300&display=swap" rel="stylesheet"/>
+    <link href="style.css" rel="stylesheet"/>
+    <title>gorillua - lua application server</title>
+  </head>
+  <body>
+    <div class="sidebar">
+      <div class="topbar">
+        <a class="title" href="">gorillua</a>
+        <span class="description">lua application server</span>
+      </div>
+      
+    </div>
+
+    <div class="page">
+      <div class="content"><div id="README.md" class="text">
+<blockquote>
+    <p><strong>go</strong>ril<strong>lua</strong></p>
+</blockquote>
+
+<h1>doc</h1>
+
+<pre><code>make LUA_PATH="./?.lua;/usr/share/gorillua/?.lua"
+./gorillua ./example.lua [...]
+</code></pre>
+
+<h2>bindings</h2>
+
+<h3>base64</h3>
+
+<pre><code>local base64 = require("base64")
+
+b = base64.encode("hello world")
+s = base64.decode(b)
+</code></pre>
+
+<h3>cron</h3>
+
+<pre><code>local cron = require("cron")
+
+-- 1st argument is the interval in seconds while
+-- 2nd is a function that will be called
+c = cron.run(10, function() print("hello world") end)
+c.stop()
+</code></pre>
+
+<h3>http</h3>
+
+<p>start serving requests</p>
+
+<pre><code>local http = require("http")
+
+-- the 3rd argument is either nil or a path to a directory containing static files
+http.serve("127.0.0.1:5558", {
+  { method = "GET", context = "/", callback = func(w, r) w.write("hello world") end }
+  { method = "POST", context = "/", callback = func(w, r) w.write("hello post world") end }
+}, nil)
+</code></pre>
+
+<p>define callback functions for http requests</p>
+
+<pre><code>function example(w, r)
+  -- r is the request
+  useragent = r.get_header("User-Agent")
+
+  body = r.get_body()
+
+  cookie = r.get_cookie("key")
+
+  -- /foo/bla/{id}
+  vars = r.parse_vars()
+  print(vars.id)
+
+  params = r.parse_form()
+  print(params.username)
+
+  -- w is the response writer
+  w.add_header("X-Header-Foo", "example")
+  w.set_status(200)
+
+  w.set_cookie("key", "value", "/", 86400, true)
+
+  w.write("this is the response body")
+end
+</code></pre>
+
+<h3>json</h3>
+
+<pre><code>local json = require("json")
+
+foo = json.decode('{"hello":"world"}')
+print(foo.hello)
+foo.bla = 3
+json.encode(foo)
+</code></pre>
+
+<h3>logger</h3>
+
+<pre><code>local logger = require("logger")
+
+-- 0: debug, 1: error, 2: info
+logger.set_level(0)
+logger.debug("this is a debug message")
+logger.error("this is a error message")
+logger.info("this is a info message")
+</code></pre>
+
+<h3>mariadb</h3>
+
+<pre><code>local mariadb = require("mariadb")
+
+db = mariadb.open("user", "password", "127.0.0.1:3306", "database")
+result = db.query("SELECT * FROM table WHERE id = ?", 1)
+for k, v in pairs(result) do print(v.id) end
+db.close()
+</code></pre>
+
+<h3>request</h3>
+
+<pre><code>local request = require("request")
+
+-- 3rd argument contains the request body
+-- 4th argument is a table of request headers
+code, body, header, err = request.send(
+  "GET", "http://example.org", nil, nil)
+</code></pre>
+
+<h3>socket</h3>
+
+<pre><code>local socket = require("socket")
+
+-- 3rd argument is optional and defines a timeout in seconds
+c = socket.open("tcp", "127.0.0.1:8080", nil)
+c.close()
+</code></pre>
+
+<h3>uuid</h3>
+
+<pre><code>local uuid = require("uuid")
+
+u = uuid.create()
+</code></pre>
+
+</div><div class="footer">February 2020 - powered by <a href="https://github.com/shagu/webls">webls</a></div></div>
+    </div>
+  </body>
+</html>
